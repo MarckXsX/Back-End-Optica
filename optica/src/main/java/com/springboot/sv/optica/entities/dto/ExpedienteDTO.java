@@ -1,12 +1,23 @@
 package com.springboot.sv.optica.entities.dto;
 
+import com.springboot.sv.optica.validation.IsExistsPacienteExpediente;
+import com.springboot.sv.optica.validation.IsFecha;
+import com.springboot.sv.optica.validation.IsRequired;
+
 import java.util.Date;
 
 public class ExpedienteDTO {
 
+    @IsExistsPacienteExpediente
+    //@IsRequired
     private Long paciente;
+
+    @IsRequired
     private String observaciones;
-    private Date fecha_registro;
+
+    //@IsRequired
+    @IsFecha
+    private String fecha_registro;
 
     public Long getPaciente() {
         return paciente;
@@ -24,11 +35,11 @@ public class ExpedienteDTO {
         this.observaciones = observaciones;
     }
 
-    public Date getFecha_registro() {
+    public String getFecha_registro() {
         return fecha_registro;
     }
 
-    public void setFecha_registro(Date fecha_registro) {
+    public void setFecha_registro(String fecha_registro) {
         this.fecha_registro = fecha_registro;
     }
 }

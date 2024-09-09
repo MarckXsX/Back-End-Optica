@@ -5,12 +5,16 @@ import com.springboot.sv.optica.entities.Paciente;
 import com.springboot.sv.optica.entities.dto.ExpedienteDTO;
 import com.springboot.sv.optica.services.ExpedienteService;
 import com.springboot.sv.optica.services.PacienteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -35,7 +39,10 @@ public class ExpedienteController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody ExpedienteDTO expedienteDTO){
+    public ResponseEntity<?> create(@Valid @RequestBody ExpedienteDTO expedienteDTO, BindingResult result){
+        if(result.hasFieldErrors()){
+            return validation(result);
+        }
         Optional<Expediente> optionalExpediente = service.save(expedienteDTO);
         if(optionalExpediente.isPresent()){
 
@@ -45,7 +52,10 @@ public class ExpedienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ExpedienteDTO expedienteDTO){
+    public ResponseEntity<?> update(@Valid @PathVariable Long id, @RequestBody ExpedienteDTO expedienteDTO, BindingResult result){
+        if(result.hasFieldErrors()){
+            return validation(result);
+        }
         Optional<Expediente> optionalExpediente = service.update(id,expedienteDTO);
         if (optionalExpediente.isPresent()){
             return ResponseEntity.status(HttpStatus.CREATED).body(optionalExpediente.orElseThrow());
@@ -60,6 +70,15 @@ public class ExpedienteController {
             return ResponseEntity.ok(optionalExpediente.orElseThrow());
         }
         return ResponseEntity.notFound().build();
+    }
+
+    private ResponseEntity<?> validation(BindingResult result){ //DEFINIR ESTE METODO SIEMPRE
+        Map<String, String> errors = new HashMap<>();
+
+        result.getFieldErrors().forEach(err -> {
+            errors.put(err.getField(), "En el campo " + err.getField() + ", Presenta el siguiente error: " + err.getDefaultMessage());
+        });
+        return ResponseEntity.badRequest().body(errors);
     }
 
 

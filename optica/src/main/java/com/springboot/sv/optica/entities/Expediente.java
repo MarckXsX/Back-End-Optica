@@ -23,7 +23,7 @@ public class Expediente {
 
     private String observaciones;
 
-    private Date fecha_registro;
+    private String fecha_registro;
 
     public Long getId() {
         return id;
@@ -49,11 +49,11 @@ public class Expediente {
         this.observaciones = observaciones;
     }
 
-    public Date getFecha_registro() {
+    public String getFecha_registro() {
         return fecha_registro;
     }
 
-    public void setFecha_registro(Date fecha_registro) {
+    public void setFecha_registro(String fecha_registro) {
         this.fecha_registro = fecha_registro;
     }
 }

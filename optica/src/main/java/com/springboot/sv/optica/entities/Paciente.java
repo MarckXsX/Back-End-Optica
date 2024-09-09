@@ -3,6 +3,8 @@ package com.springboot.sv.optica.entities;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.springboot.sv.optica.validation.IsFecha;
+import com.springboot.sv.optica.validation.IsRequired;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -28,14 +30,19 @@ public class Paciente {
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
     private List<Cita> citas;
 
+    @IsRequired
     private String nombres;
 
+    @IsRequired
     private String apellidos;
 
-    private Date fecha_nacimiento;
+    @IsFecha
+    private String fecha_nacimiento;
 
+    @IsRequired
     private String telefono;
 
+    @IsRequired
     private String correo;
 
     public Long getId() {
@@ -62,11 +69,11 @@ public class Paciente {
         this.apellidos = apellidos;
     }
 
-    public Date getFecha_nacimiento() {
+    public String getFecha_nacimiento() {
         return fecha_nacimiento;
     }
 
-    public void setFecha_nacimiento(Date fecha_nacimiento) {
+    public void setFecha_nacimiento(String fecha_nacimiento) {
         this.fecha_nacimiento = fecha_nacimiento;
     }
 

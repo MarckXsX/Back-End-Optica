@@ -16,4 +16,5 @@ public interface ExpedienteService {
     Optional<Expediente> update(Long id, ExpedienteDTO expedienteDTO);
 
     Optional<Expediente> delete(Long id);
+
 }

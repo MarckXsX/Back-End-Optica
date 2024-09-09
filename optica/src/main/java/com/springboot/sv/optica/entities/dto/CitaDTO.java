@@ -1,5 +1,9 @@
 package com.springboot.sv.optica.entities.dto;
 
+import com.springboot.sv.optica.validation.IsRequired;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.lang.NonNull;
+
 import java.util.Date;
 
 public class CitaDTO {
@@ -7,6 +11,9 @@ public class CitaDTO {
     private Long paciente;
     private Date fecha_cita;
     private String hora_cita;
+
+    @IsRequired
+    //@NotNull(message = "{NotNull.cita.estado}")
     private String estado;
     private double costo;
 
