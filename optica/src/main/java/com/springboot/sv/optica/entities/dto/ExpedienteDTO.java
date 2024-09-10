@@ -1,14 +1,12 @@
 package com.springboot.sv.optica.entities.dto;
 
-import com.springboot.sv.optica.validation.IsExistsPacienteExpediente;
+import com.springboot.sv.optica.validation.IsExistsPaciente;
 import com.springboot.sv.optica.validation.IsFecha;
 import com.springboot.sv.optica.validation.IsRequired;
 
-import java.util.Date;
-
 public class ExpedienteDTO {
 
-    @IsExistsPacienteExpediente
+    @IsExistsPaciente
     //@IsRequired
     private Long paciente;
 

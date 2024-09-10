@@ -8,10 +8,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = IsExistsPacienteExpedienteValidation.class)
+@Constraint(validatedBy = IsExistsPacienteValidation.class)
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface IsExistsPacienteExpediente {
+public @interface IsExistsPaciente {
     String message() default "No existe registro del paciente!";
 
     Class<?>[] groups() default {};

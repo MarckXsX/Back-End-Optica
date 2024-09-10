@@ -1,8 +1,6 @@
 package com.springboot.sv.optica.validation;
 
-import com.springboot.sv.optica.entities.Expediente;
 import com.springboot.sv.optica.entities.Paciente;
-import com.springboot.sv.optica.services.ExpedienteService;
 import com.springboot.sv.optica.services.PacienteService;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -12,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class IsExistsPacienteExpedienteValidation implements ConstraintValidator<IsExistsPacienteExpediente, Long> {
+public class IsExistsPacienteValidation implements ConstraintValidator<IsExistsPaciente, Long> {
 
     @Autowired
     private PacienteService service;
