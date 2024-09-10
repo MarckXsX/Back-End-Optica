@@ -52,7 +52,7 @@ public class ExpedienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@Valid @PathVariable Long id, @RequestBody ExpedienteDTO expedienteDTO, BindingResult result){
+    public ResponseEntity<?> update(@Valid @RequestBody ExpedienteDTO expedienteDTO, BindingResult result, @PathVariable Long id){
         if(result.hasFieldErrors()){
             return validation(result);
         }

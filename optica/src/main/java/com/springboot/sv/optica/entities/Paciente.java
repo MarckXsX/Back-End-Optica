@@ -5,7 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.springboot.sv.optica.validation.IsFecha;
 import com.springboot.sv.optica.validation.IsRequired;
+import com.springboot.sv.optica.validation.IsTelefono;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.Date;
 import java.util.List;
@@ -39,10 +42,11 @@ public class Paciente {
     @IsFecha
     private String fecha_nacimiento;
 
-    @IsRequired
+    @IsTelefono
     private String telefono;
 
-    @IsRequired
+    @NotBlank(message = "El correo electrónico no puede estar vacío")
+    @Email(message = "El correo electrónico debe tener un formato válido")
     private String correo;
 
     public Long getId() {
