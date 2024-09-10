@@ -1,12 +1,30 @@
 package com.springboot.sv.optica.entities.dto;
 
+import com.springboot.sv.optica.validation.IsExistsEspecialidad;
+import com.springboot.sv.optica.validation.IsRequired;
+import com.springboot.sv.optica.validation.IsTelefono;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 public class DoctorDTO {
 
+    @IsExistsEspecialidad
     private Long especialidad;
+
+    @IsRequired
     private String nombres;
+
+    @IsRequired
     private String apellidos;
+
+    @IsTelefono
     private String telefono;
+
+    @NotBlank(message = "{NotBlank.correo}")
+    @Email(message = "{Email.formato}")
     private String correo;
+
+    @IsRequired //Posible cambio
     private String licencia;
 
     public Long getEspecialidad() {
