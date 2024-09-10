@@ -1,7 +1,10 @@
 package com.springboot.sv.optica.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.springboot.sv.optica.validation.IsRequired;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.util.List;
 
@@ -17,14 +20,21 @@ public class Medicamento {
     @OneToMany(mappedBy = "medicamento", cascade = CascadeType.ALL)
     private List<Receta> recetas;
 
+    @IsRequired
     private String nombre;
 
+    @IsRequired
     private String fabricante;
 
+    @IsRequired
     private String via_administracion;
 
+    @Positive(message = "{positive.message}")
+    @NotNull(message = "{NotNull.message}")
     private Double costo;
 
+    @Positive(message = "{positive.message}")
+    @NotNull(message = "{NotNull.message}")
     private Integer stock;
 
     public Long getId() {

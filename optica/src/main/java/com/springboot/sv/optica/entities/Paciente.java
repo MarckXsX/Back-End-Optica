@@ -45,7 +45,7 @@ public class Paciente {
     @IsTelefono
     private String telefono;
 
-    @NotBlank(message = "{NotBlank.correo}")
+    @NotBlank(message = "{NotBlank.message}")
     @Email(message = "{Email.formato}")
     private String correo;
 
