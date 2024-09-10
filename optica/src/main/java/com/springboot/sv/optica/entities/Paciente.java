@@ -45,8 +45,8 @@ public class Paciente {
     @IsTelefono
     private String telefono;
 
-    @NotBlank(message = "El correo electrónico no puede estar vacío")
-    @Email(message = "El correo electrónico debe tener un formato válido")
+    @NotBlank(message = "{NotBlank.correo}")
+    @Email(message = "{Email.formato}")
     private String correo;
 
     public Long getId() {
