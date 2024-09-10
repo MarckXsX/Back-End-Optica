@@ -3,6 +3,7 @@ package com.springboot.sv.optica.entities;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.springboot.sv.optica.validation.IsRequired;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -15,8 +16,10 @@ public class Especialidad {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @IsRequired
     private String nombre;
 
+    @IsRequired
     private String descripcion;
 
     //@JsonBackReference // Indica que esta parte debe ser ignorada durante la serialización para evitar recursividad
