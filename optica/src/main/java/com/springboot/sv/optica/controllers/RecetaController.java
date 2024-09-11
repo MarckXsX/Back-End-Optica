@@ -3,12 +3,16 @@ package com.springboot.sv.optica.controllers;
 import com.springboot.sv.optica.entities.Receta;
 import com.springboot.sv.optica.entities.dto.RecetaDTO;
 import com.springboot.sv.optica.services.RecetaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -33,7 +37,10 @@ public class RecetaController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody RecetaDTO recetaDTO){
+    public ResponseEntity<?> create(@Valid @RequestBody RecetaDTO recetaDTO, BindingResult result){
+        if(result.hasFieldErrors()){
+            return validation(result);
+        }
         Optional<Receta> optionalReceta = service.save(recetaDTO);
         if(optionalReceta.isPresent()){
 
@@ -43,7 +50,10 @@ public class RecetaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody RecetaDTO recetaDTO){
+    public ResponseEntity<?> update(@Valid @RequestBody RecetaDTO recetaDTO, BindingResult result, @PathVariable Long id){
+        if(result.hasFieldErrors()){
+            return validation(result);
+        }
         Optional<Receta> optionalReceta = service.update(id,recetaDTO);
         if (optionalReceta.isPresent()){
             return ResponseEntity.status(HttpStatus.CREATED).body(optionalReceta.orElseThrow());
@@ -58,5 +68,14 @@ public class RecetaController {
             return ResponseEntity.ok(optionalReceta.orElseThrow());
         }
         return ResponseEntity.notFound().build();
+    }
+
+    private ResponseEntity<?> validation(BindingResult result){ //DEFINIR ESTE METODO SIEMPRE
+        Map<String, String> errors = new HashMap<>();
+
+        result.getFieldErrors().forEach(err -> {
+            errors.put(err.getField(), "En el campo " + err.getField() + ", Presenta el siguiente error: " + err.getDefaultMessage());
+        });
+        return ResponseEntity.badRequest().body(errors);
     }
 }

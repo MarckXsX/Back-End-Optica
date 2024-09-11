@@ -41,11 +41,23 @@ public class RecetaServiceImpl implements RecetaService {
         if(optionalConsulta.isPresent() && optionalMedicamento.isPresent()){
             Consulta consultaDB = optionalConsulta.orElseThrow();
             Medicamento medicamentoDB = optionalMedicamento.orElseThrow();
-            Receta receta = new Receta();
-            receta.setConsulta(consultaDB);
-            receta.setMedicamento(medicamentoDB);
-            receta.setCantidad(recetaDTO.getCantidad());
-            return Optional.of(repository.save(receta));
+
+            Integer cantidadSoli = recetaDTO.getCantidad();
+            Integer stockDisponible = medicamentoDB.getStock();
+
+            if(stockDisponible> cantidadSoli && stockDisponible > 0){
+                medicamentoDB.setStock(stockDisponible - cantidadSoli);
+                medicamentoRepository.save(medicamentoDB);
+
+                Receta receta = new Receta();
+                receta.setConsulta(consultaDB);
+                receta.setMedicamento(medicamentoDB);
+                receta.setCantidad(recetaDTO.getCantidad());
+                return Optional.of(repository.save(receta));
+            }else {
+                return Optional.empty();
+            }
+
         }
         return Optional.empty();
     }
@@ -60,6 +72,24 @@ public class RecetaServiceImpl implements RecetaService {
                 Consulta consultaDB = optionalConsulta.orElseThrow();
                 Medicamento medicamentoDB = optionalMedicamento.orElseThrow();
                 Receta recetaDB = optionalReceta.orElseThrow();
+
+                Integer cantidadActual = recetaDB.getCantidad();
+                Integer nuevaCantidad = recetaDTO.getCantidad();
+                Integer stockDisponible = medicamentoDB.getStock();
+
+                Integer diferencia = nuevaCantidad - cantidadActual;
+                if(diferencia < 0){
+                    medicamentoDB.setStock(stockDisponible + Math.abs(diferencia));
+                    medicamentoRepository.save(medicamentoDB);
+                } else if (diferencia > 0) {
+                    if(stockDisponible> diferencia){
+                        medicamentoDB.setStock(stockDisponible - diferencia);
+                        medicamentoRepository.save(medicamentoDB);
+                    }else {
+                        return Optional.empty();
+                    }
+                }
+
                 recetaDB.setConsulta(consultaDB);
                 recetaDB.setMedicamento(medicamentoDB);
                 recetaDB.setCantidad(recetaDTO.getCantidad());

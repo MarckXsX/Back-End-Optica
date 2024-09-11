@@ -1,9 +1,20 @@
 package com.springboot.sv.optica.entities.dto;
 
+import com.springboot.sv.optica.validation.IsExistsConsulta;
+import com.springboot.sv.optica.validation.IsExistsMedicamento;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 public class RecetaDTO {
 
+    @IsExistsConsulta
     private Long consulta;
+
+    @IsExistsMedicamento
     private Long medicamento;
+
+    @Positive(message = "{positive.message}")
+    @NotNull(message = "{NotNull.message}")
     private Integer cantidad;
 
     public Long getConsulta() {
