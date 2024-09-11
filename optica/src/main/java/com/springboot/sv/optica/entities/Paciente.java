@@ -33,6 +33,10 @@ public class Paciente {
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
     private List<Cita> citas;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
+    private List<FacturaProducto> facturaProductoList;
+
     @IsRequired
     private String nombres;
 
@@ -111,6 +115,14 @@ public class Paciente {
 
     public void setCitas(List<Cita> citas) {
         this.citas = citas;
+    }
+
+    public List<FacturaProducto> getFacturaProductoList() {
+        return facturaProductoList;
+    }
+
+    public void setFacturaProductoList(List<FacturaProducto> facturaProductoList) {
+        this.facturaProductoList = facturaProductoList;
     }
 
     @Override

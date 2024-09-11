@@ -28,6 +28,10 @@ public class Consulta {
     @OneToMany(mappedBy = "consulta", cascade = CascadeType.ALL)
     private List<Receta> recetas;
 
+    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL , orphanRemoval = true ,mappedBy = "consulta")
+    private Graduacion graduacion;
+
     private String diagnostico;
 
     private String instrucciones;
@@ -78,5 +82,13 @@ public class Consulta {
 
     public void setRecetas(List<Receta> recetas) {
         this.recetas = recetas;
+    }
+
+    public Graduacion getGraduacion() {
+        return graduacion;
+    }
+
+    public void setGraduacion(Graduacion graduacion) {
+        this.graduacion = graduacion;
     }
 }
