@@ -4,13 +4,19 @@ import com.springboot.sv.optica.entities.Cita;
 import com.springboot.sv.optica.entities.Consulta;
 import com.springboot.sv.optica.entities.dto.CitaDTO;
 import com.springboot.sv.optica.entities.dto.ConsultaDTO;
+import com.springboot.sv.optica.services.CitaService;
 import com.springboot.sv.optica.services.ConsultaService;
+import com.springboot.sv.optica.validation.CitaLibreValidation;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -35,7 +41,10 @@ public class ConsultasController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody ConsultaDTO consultaDTO){
+    public ResponseEntity<?> create(@Valid @RequestBody ConsultaDTO consultaDTO, BindingResult result){
+        if(result.hasFieldErrors()){
+            return validation(result);
+        }
         Optional<Consulta> optionalConsulta = service.save(consultaDTO);
         if(optionalConsulta.isPresent()){
 
@@ -45,7 +54,12 @@ public class ConsultasController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ConsultaDTO consultaDTO){
+    public ResponseEntity<?> update(@Valid @RequestBody ConsultaDTO consultaDTO, BindingResult result, @PathVariable Long id){
+
+        if(result.hasFieldErrors()){
+            return validation(result);
+        }
+
         Optional<Consulta> optionalConsulta = service.update(id,consultaDTO);
         if (optionalConsulta.isPresent()){
             return ResponseEntity.status(HttpStatus.CREATED).body(optionalConsulta.orElseThrow());
@@ -60,5 +74,14 @@ public class ConsultasController {
             return ResponseEntity.ok(optionalConsulta.orElseThrow());
         }
         return ResponseEntity.notFound().build();
+    }
+
+    private ResponseEntity<?> validation(BindingResult result){ //DEFINIR ESTE METODO SIEMPRE
+        Map<String, String> errors = new HashMap<>();
+
+        result.getFieldErrors().forEach(err -> {
+            errors.put(err.getField(), "El campo " + err.getField() + " " + err.getDefaultMessage());
+        });
+        return ResponseEntity.badRequest().body(errors);
     }
 }

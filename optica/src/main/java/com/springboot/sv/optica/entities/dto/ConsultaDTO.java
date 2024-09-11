@@ -1,12 +1,24 @@
 package com.springboot.sv.optica.entities.dto;
 
 
+import com.springboot.sv.optica.validation.IsCitaLibre;
+import com.springboot.sv.optica.validation.IsExistsCita;
+import com.springboot.sv.optica.validation.IsExistsDoctor;
+import com.springboot.sv.optica.validation.IsRequired;
 
 public class ConsultaDTO {
 
+    @IsExistsCita
+    //@IsCitaLibre
     private Long cita;
+
+    @IsExistsDoctor
     private Long doctor;
+
+    @IsRequired
     private String diagnostico;
+
+    @IsRequired
     private String instrucciones;
 
     public Long getCita() {
