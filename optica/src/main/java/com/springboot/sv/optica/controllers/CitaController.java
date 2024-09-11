@@ -51,7 +51,10 @@ public class CitaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CitaDTO citaDTO){
+    public ResponseEntity<?> update(@Valid @RequestBody CitaDTO citaDTO, BindingResult result, @PathVariable Long id){
+        if(result.hasFieldErrors()){
+            return validation(result);
+        }
         Optional<Cita> optionalCita = service.update(id,citaDTO);
         if (optionalCita.isPresent()){
             return ResponseEntity.status(HttpStatus.CREATED).body(optionalCita.orElseThrow());

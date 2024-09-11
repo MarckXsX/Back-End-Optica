@@ -25,7 +25,7 @@ public class Cita {
     @OneToOne(cascade = CascadeType.ALL , orphanRemoval = true ,mappedBy = "cita")
     private Consulta consulta;
 
-    private Date fecha_cita;
+    private String fecha_cita;
 
     private String hora_cita;
 
@@ -49,11 +49,11 @@ public class Cita {
         this.paciente = paciente;
     }
 
-    public Date getFecha_cita() {
+    public String getFecha_cita() {
         return fecha_cita;
     }
 
-    public void setFecha_cita(Date fecha_cita) {
+    public void setFecha_cita(String fecha_cita) {
         this.fecha_cita = fecha_cita;
     }
 

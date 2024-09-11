@@ -1,20 +1,31 @@
 package com.springboot.sv.optica.entities.dto;
 
+import com.springboot.sv.optica.validation.IsExistsPaciente;
+import com.springboot.sv.optica.validation.IsFecha;
 import com.springboot.sv.optica.validation.IsRequired;
+import com.springboot.sv.optica.validation.IsValidHora;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.lang.NonNull;
 
 import java.util.Date;
 
 public class CitaDTO {
 
+    @IsExistsPaciente
     private Long paciente;
-    private Date fecha_cita;
+
+    @IsFecha
+    private String fecha_cita;
+
+    @IsValidHora
     private String hora_cita;
 
     @IsRequired
-    //@NotNull(message = "{NotNull.cita.estado}")
     private String estado;
+
+    @Positive(message = "{positive.message}")
+    @NotNull(message = "{NotNull.message}")
     private double costo;
 
     public Long getPaciente() {
@@ -25,11 +36,11 @@ public class CitaDTO {
         this.paciente = paciente;
     }
 
-    public Date getFecha_cita() {
+    public String getFecha_cita() {
         return fecha_cita;
     }
 
-    public void setFecha_cita(Date fecha_cita) {
+    public void setFecha_cita(String fecha_cita) {
         this.fecha_cita = fecha_cita;
     }
 
