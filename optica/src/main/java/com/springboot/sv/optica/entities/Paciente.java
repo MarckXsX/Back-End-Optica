@@ -37,6 +37,10 @@ public class Paciente {
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
     private List<FacturaProducto> facturaProductoList;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
+    private List<FacturaCita> facturaCitaList;
+
     @IsRequired
     private String nombres;
 

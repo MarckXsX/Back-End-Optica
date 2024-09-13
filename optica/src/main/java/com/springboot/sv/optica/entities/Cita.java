@@ -25,6 +25,10 @@ public class Cita {
     @OneToOne(cascade = CascadeType.ALL , orphanRemoval = true ,mappedBy = "cita")
     private Consulta consulta;
 
+    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL , orphanRemoval = true ,mappedBy = "cita")
+    private FacturaCita facturaCita;
+
     private String fecha_cita;
 
     private String hora_cita;

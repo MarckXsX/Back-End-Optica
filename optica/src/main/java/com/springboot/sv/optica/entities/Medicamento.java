@@ -20,6 +20,10 @@ public class Medicamento {
     @OneToMany(mappedBy = "medicamento", cascade = CascadeType.ALL)
     private List<Receta> recetas;
 
+    @JsonIgnore
+    @ManyToMany(mappedBy = "medicamentos", cascade = CascadeType.ALL)
+    private List<FacturaCita> facturaCitas;
+
     @IsRequired
     private String nombre;
 
