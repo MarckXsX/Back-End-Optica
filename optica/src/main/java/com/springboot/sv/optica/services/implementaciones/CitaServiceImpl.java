@@ -1,8 +1,6 @@
 package com.springboot.sv.optica.services.implementaciones;
 
 import com.springboot.sv.optica.entities.Cita;
-import com.springboot.sv.optica.entities.Doctor;
-import com.springboot.sv.optica.entities.Especialidad;
 import com.springboot.sv.optica.entities.Paciente;
 import com.springboot.sv.optica.entities.dto.CitaDTO;
 import com.springboot.sv.optica.repositories.CitaRepository;
@@ -36,7 +34,7 @@ public class CitaServiceImpl implements CitaService {
     @Override
     public Optional<Cita> save(CitaDTO citaDTO) {
         Optional<Paciente> optionalPaciente = pacienteRepository.findById(citaDTO.getPaciente());
-        if(optionalPaciente.isPresent()){
+        if(optionalPaciente.isPresent() && !citaDTO.getEstado().equalsIgnoreCase("Finalizada")){
             Paciente pacienteDB = optionalPaciente.orElseThrow();
             Cita cita = new Cita();
             cita.setPaciente(pacienteDB);
@@ -54,10 +52,12 @@ public class CitaServiceImpl implements CitaService {
     public Optional<Cita> update(Long id, CitaDTO citaDTO) {
         Optional<Cita> optionalCita = repository.findById(id);
         if (optionalCita.isPresent()) {
+            Cita citaDB = optionalCita.orElseThrow();
+            String estadoCita = citaDB.getEstado();
             Optional<Paciente> optionalPaciente = pacienteRepository.findById(citaDTO.getPaciente());
-            if(optionalPaciente.isPresent()){
+            if(optionalPaciente.isPresent() && !estadoCita.equalsIgnoreCase("Finalizada") && !citaDTO.getEstado().equalsIgnoreCase("Finalizada") ){
                 Paciente pacienteDB = optionalPaciente.orElseThrow();
-                Cita citaDB = optionalCita.orElseThrow();
+                //Cita citaDB = optionalCita.orElseThrow();
                 citaDB.setPaciente(pacienteDB);
                 citaDB.setFecha_cita(citaDTO.getFecha_cita());
                 citaDB.setHora_cita(citaDTO.getHora_cita());
@@ -74,8 +74,19 @@ public class CitaServiceImpl implements CitaService {
     @Override
     public Optional<Cita> delete(Long id) {
         Optional<Cita> optionalCita = repository.findById(id);
+        /*if(optionalCita.isPresent()){
+            Cita citaDB = optionalCita.orElseThrow();
+            if(!citaDB.getEstado().equalsIgnoreCase("Finalizada")){
+                optionalCita.ifPresent(cita -> {
+                    repository.delete(cita);
+                });
+            }
+            return  Optional.empty();
+        }*/
         optionalCita.ifPresent(cita -> {
-            repository.delete(cita);
+            if(!cita.getEstado().equalsIgnoreCase("Finalizada")) {
+                repository.delete(cita);
+            }
         });
         return optionalCita;
     }
