@@ -39,7 +39,8 @@ public class ExpedienteServiceImpl implements ExpedienteService {
     @Transactional()
     public Optional<Expediente> save(ExpedienteDTO expedienteDTO) {
         Optional<Paciente> optionalPaciente = pacienteRepository.findById(expedienteDTO.getPaciente());
-        if(optionalPaciente.isPresent()){
+        boolean pacienteExpediente = repository.existsByPacienteId(expedienteDTO.getPaciente());
+        if(optionalPaciente.isPresent() && !pacienteExpediente){
             Paciente pacienteDB = optionalPaciente.orElseThrow();
             Expediente expediente = new Expediente();
             expediente.setPaciente(pacienteDB);
@@ -57,7 +58,11 @@ public class ExpedienteServiceImpl implements ExpedienteService {
         Optional<Expediente> optionalExpediente = repository.findById(id);
         if (optionalExpediente.isPresent()) {
             Optional<Paciente> optionalPaciente = pacienteRepository.findById(expedienteDTO.getPaciente());
-           if(optionalPaciente.isPresent()){
+            boolean PacienteConExpediente = repository.existsByPacienteIdAndId(expedienteDTO.getPaciente(),id);
+            //boolean pacienteSinExpediente = repository.existsByPacienteId(expedienteDTO.getPaciente());
+            //System.out.println("El paciente no posee registro de expediente = " + !pacienteSinExpediente);
+            //System.out.println("El paciente esta registrado con el expediente que se paso por id " + PacienteConExpediente);
+           if(optionalPaciente.isPresent() &&  PacienteConExpediente){
                Expediente expedienteDB = optionalExpediente.orElseThrow();
                Paciente pacienteDB = optionalPaciente.orElseThrow();
                expedienteDB.setPaciente(pacienteDB);
@@ -76,7 +81,6 @@ public class ExpedienteServiceImpl implements ExpedienteService {
     public Optional<Expediente> delete(Long id) {
         Optional<Expediente> optionalExpediente = repository.findById(id);
         optionalExpediente.ifPresent(expediente -> {
-            expediente.setPaciente(null);
             repository.delete(expediente);
         });
         return optionalExpediente;
