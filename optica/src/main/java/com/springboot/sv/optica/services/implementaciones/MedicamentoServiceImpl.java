@@ -49,9 +49,14 @@ public class MedicamentoServiceImpl implements MedicamentoService {
     @Override
     public Optional<Medicamento> delete(Long id) {
         Optional<Medicamento> optionalMedicamento = repository.findById(id);
-        optionalMedicamento.ifPresent(medicamento -> {
-            repository.delete(medicamento);
-        });
+        if(optionalMedicamento.isPresent()){
+            Medicamento medicamentoDB = optionalMedicamento.orElseThrow();
+            if(medicamentoDB.getRecetas().isEmpty()){
+                repository.delete(medicamentoDB);
+                return optionalMedicamento;
+            }
+            return Optional.empty();
+        }
         return optionalMedicamento;
     }
 }

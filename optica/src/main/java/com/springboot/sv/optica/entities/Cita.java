@@ -92,4 +92,12 @@ public class Cita {
     public void setConsulta(Consulta consulta) {
         this.consulta = consulta;
     }
+
+    public FacturaCita getFacturaCita() {
+        return facturaCita;
+    }
+
+    public void setFacturaCita(FacturaCita facturaCita) {
+        this.facturaCita = facturaCita;
+    }
 }

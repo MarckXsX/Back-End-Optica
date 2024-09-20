@@ -1,9 +1,6 @@
 package com.springboot.sv.optica.services.implementaciones;
 
-import com.springboot.sv.optica.entities.Doctor;
-import com.springboot.sv.optica.entities.Especialidad;
-import com.springboot.sv.optica.entities.Expediente;
-import com.springboot.sv.optica.entities.Paciente;
+import com.springboot.sv.optica.entities.*;
 import com.springboot.sv.optica.entities.dto.DoctorDTO;
 import com.springboot.sv.optica.repositories.DoctorRepository;
 import com.springboot.sv.optica.repositories.EspecialidadRepository;
@@ -32,6 +29,11 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public Optional<Doctor> findById(Long id) {
         return repository.findById(id);
+    }
+
+    @Override
+    public List<Consulta> consultasDoctor(Long id) {
+        return repository.consultasDoctor(id);
     }
 
     @Override
@@ -77,10 +79,14 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public Optional<Doctor> delete(Long id) {
         Optional<Doctor> optionalDoctor = repository.findById(id);
-        optionalDoctor.ifPresent(doctor -> {
-            //doctor.setEspecialidad(null);
-            repository.delete(doctor);
-        });
+        if(optionalDoctor.isPresent()){
+            Doctor doctorDB = optionalDoctor.orElseThrow();
+            if(doctorDB.getConsultas().isEmpty()){
+                repository.delete(doctorDB);
+                return optionalDoctor;
+            }
+            return Optional.empty();
+        }
         return optionalDoctor;
     }
 }

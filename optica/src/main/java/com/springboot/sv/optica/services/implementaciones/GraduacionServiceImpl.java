@@ -34,8 +34,12 @@ public class GraduacionServiceImpl implements GraduacionService {
     @Override
     public Optional<Graduacion> save(GraduacionDTO graduacionDTO) {
         Optional<Consulta> optionalConsulta = consultaRepository.findById(graduacionDTO.getConsulta());
-        if(optionalConsulta.isPresent()){
-            Consulta consultaDB = optionalConsulta.orElseThrow();
+
+        boolean consultaEnFactura = consultaRepository.ExisteConsultaFactura(graduacionDTO.getConsulta());
+        boolean consultaSinGraduacion = repository.existsByConsultaId(graduacionDTO.getConsulta());
+
+        Consulta consultaDB = optionalConsulta.orElseThrow();
+        if(!consultaEnFactura && !consultaSinGraduacion /*|| consultaDB.getGraduacion() == null*/ ){
             Graduacion graduacion = new Graduacion();
             graduacion.setConsulta(consultaDB);
             graduacion.setAdicion(graduacionDTO.getAdicion());
@@ -52,17 +56,26 @@ public class GraduacionServiceImpl implements GraduacionService {
     public Optional<Graduacion> update(Long id, GraduacionDTO graduacionDTO) {
         Optional<Graduacion> optionalGraduacion = repository.findById(id);
         if(optionalGraduacion.isPresent()){
-            Optional<Consulta> optionalConsulta = consultaRepository.findById(graduacionDTO.getConsulta());
-            if(optionalConsulta.isPresent()){
-                Graduacion graduacionDB = optionalGraduacion.orElseThrow();
-                Consulta consultaDB = optionalConsulta.orElseThrow();
-                graduacionDB.setConsulta(consultaDB);
-                graduacionDB.setAdicion(graduacionDTO.getAdicion());
-                graduacionDB.setFecha_emision(graduacionDTO.getFecha_emision());
-                graduacionDB.setDetalle_graduacion(graduacionDTO.getDetalle_graduacion());
-                graduacionDB.setCosto_lente(graduacionDTO.getCosto_lente());
 
-                return Optional.of(repository.save(graduacionDB));
+            Optional<Consulta> optionalConsulta = consultaRepository.findById(graduacionDTO.getConsulta());
+
+            boolean consultaEnFactura = consultaRepository.ExisteConsultaFactura(graduacionDTO.getConsulta());
+            boolean consultaGraduacion = repository.existsByConsultaIdAndId(graduacionDTO.getConsulta(), id);
+            boolean consultaSinGraduacion = repository.existsByConsultaId(graduacionDTO.getConsulta());
+
+            Consulta consultaDB = optionalConsulta.orElseThrow();
+            Graduacion graduacionDB = optionalGraduacion.orElseThrow();
+            if(graduacionDB.getFacturaProducto() == null){ //La graduacion no tiene que estar asociada a una factura
+                if(!consultaEnFactura && (consultaGraduacion || !consultaSinGraduacion /*|| consultaDB.getGraduacion() == null*/)){ //Si la consulta que se quiere agregar no esta en algun registro de factura, se podra actualizar
+                    graduacionDB.setConsulta(consultaDB);
+                    graduacionDB.setAdicion(graduacionDTO.getAdicion());
+                    graduacionDB.setFecha_emision(graduacionDTO.getFecha_emision());
+                    graduacionDB.setDetalle_graduacion(graduacionDTO.getDetalle_graduacion());
+                    graduacionDB.setCosto_lente(graduacionDTO.getCosto_lente());
+
+                    return Optional.of(repository.save(graduacionDB));
+                }
+                return Optional.empty();
 
             }
             return Optional.empty();
@@ -73,9 +86,13 @@ public class GraduacionServiceImpl implements GraduacionService {
     @Override
     public Optional<Graduacion> delete(Long id) {
         Optional<Graduacion> optionalGraduacion = repository.findById(id);
-        optionalGraduacion.ifPresent(graduacion -> {
-            repository.delete(graduacion);
-        });
+        if(optionalGraduacion.isPresent()){
+            Graduacion graduacionDB = optionalGraduacion.orElseThrow();
+            if(graduacionDB.getFacturaProducto() == null){
+                repository.delete(graduacionDB);
+                return optionalGraduacion;
+            }
+        }
         return optionalGraduacion;
     }
 }

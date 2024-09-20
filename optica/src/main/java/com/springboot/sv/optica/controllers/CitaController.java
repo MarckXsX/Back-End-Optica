@@ -33,7 +33,7 @@ public class CitaController {
         if(optionalCita.isPresent()){
             return ResponseEntity.ok(optionalCita.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cita no encontrada!");
 
     }
 
@@ -47,7 +47,7 @@ public class CitaController {
 
             return ResponseEntity.ok(optionalCita.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la creacion de la Cita, Valor del campo estado no permitido!");
     }
 
     @PutMapping("/{id}")
@@ -59,7 +59,7 @@ public class CitaController {
         if (optionalCita.isPresent()){
             return ResponseEntity.status(HttpStatus.CREATED).body(optionalCita.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la actualizacion de la Cita, Cita no encontrado, Cita actual no puede modificarse!");
     }
 
     @DeleteMapping("/{id}")
@@ -68,7 +68,7 @@ public class CitaController {
         if (optionalCita.isPresent()){
             return ResponseEntity.ok(optionalCita.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la eliminacion de la Cita, Cita no encontrado o Cita asociada a otros registros!");
     }
 
     private ResponseEntity<?> validation(BindingResult result){ //DEFINIR ESTE METODO SIEMPRE

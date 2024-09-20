@@ -38,7 +38,9 @@ public class RecetaServiceImpl implements RecetaService {
     public Optional<Receta> save(RecetaDTO recetaDTO) {
         Optional<Consulta> optionalConsulta = consultaRepository.findById(recetaDTO.getConsulta());
         Optional<Medicamento> optionalMedicamento = medicamentoRepository.findById(recetaDTO.getMedicamento());
-        if(optionalConsulta.isPresent() && optionalMedicamento.isPresent()){
+
+        boolean consultaEnFactura = consultaRepository.ExisteConsultaFactura(recetaDTO.getConsulta());
+        if(optionalConsulta.isPresent() && optionalMedicamento.isPresent() && !consultaEnFactura){
             Consulta consultaDB = optionalConsulta.orElseThrow();
             Medicamento medicamentoDB = optionalMedicamento.orElseThrow();
 
@@ -65,48 +67,89 @@ public class RecetaServiceImpl implements RecetaService {
     @Override
     public Optional<Receta> update(Long id, RecetaDTO recetaDTO) {
         Optional<Receta> optionalReceta = repository.findById(id);
-        if(optionalReceta.isPresent()){
+
+        boolean RecetaEnFactura = repository.ExisteRecetaFactura(id);
+        if(optionalReceta.isPresent() && !RecetaEnFactura){
             Optional<Consulta> optionalConsulta = consultaRepository.findById(recetaDTO.getConsulta());
             Optional<Medicamento> optionalMedicamento = medicamentoRepository.findById(recetaDTO.getMedicamento());
-            if(optionalConsulta.isPresent() && optionalMedicamento.isPresent()){
+
+            boolean medicamentoReceta = repository.existsByMedicamentoIdAndId(recetaDTO.getMedicamento(), id);
+            boolean consultaEnFactura = consultaRepository.ExisteConsultaFactura(recetaDTO.getConsulta());
+
+            if(optionalConsulta.isPresent() && optionalMedicamento.isPresent() && !consultaEnFactura){
+
                 Consulta consultaDB = optionalConsulta.orElseThrow();
                 Medicamento medicamentoDB = optionalMedicamento.orElseThrow();
                 Receta recetaDB = optionalReceta.orElseThrow();
 
-                Integer cantidadActual = recetaDB.getCantidad();
-                Integer nuevaCantidad = recetaDTO.getCantidad();
-                Integer stockDisponible = medicamentoDB.getStock();
+                if(medicamentoReceta){
+                    Integer cantidadActual = recetaDB.getCantidad();
+                    Integer nuevaCantidad = recetaDTO.getCantidad();
+                    Integer stockDisponible = medicamentoDB.getStock();
 
-                Integer diferencia = nuevaCantidad - cantidadActual;
-                if(diferencia < 0){
-                    medicamentoDB.setStock(stockDisponible + Math.abs(diferencia));
-                    medicamentoRepository.save(medicamentoDB);
-                } else if (diferencia > 0) {
-                    if(stockDisponible> diferencia){
-                        medicamentoDB.setStock(stockDisponible - diferencia);
+                    Integer diferencia = nuevaCantidad - cantidadActual;
+                    if(diferencia < 0){
+                        medicamentoDB.setStock(stockDisponible + Math.abs(diferencia));
                         medicamentoRepository.save(medicamentoDB);
+                    } else if (diferencia > 0) {
+                        if(stockDisponible> diferencia){
+                            medicamentoDB.setStock(stockDisponible - diferencia);
+                            medicamentoRepository.save(medicamentoDB);
+                        }else {
+                            return Optional.empty();
+                        }
+                    }
+
+                    recetaDB.setConsulta(consultaDB);
+                    recetaDB.setMedicamento(medicamentoDB);
+                    recetaDB.setCantidad(recetaDTO.getCantidad());
+                    return Optional.of(repository.save(recetaDB));
+
+                }else {
+
+                    Medicamento medicamentoAnt = recetaDB.getMedicamento();
+                    Integer cantidadAnt = recetaDB.getCantidad();
+                    medicamentoAnt.setStock(medicamentoAnt.getStock() + cantidadAnt);
+                    medicamentoRepository.save(medicamentoAnt);
+
+                    Integer cantidadSol = recetaDTO.getCantidad();
+                    Integer stockDisponible = medicamentoDB.getStock();
+
+                    if(stockDisponible> cantidadSol && stockDisponible > 0){
+                        medicamentoDB.setStock(stockDisponible - cantidadSol);
+                        medicamentoRepository.save(medicamentoDB);
+
+                        recetaDB.setConsulta(consultaDB);
+                        recetaDB.setMedicamento(medicamentoDB);
+                        recetaDB.setCantidad(recetaDTO.getCantidad());
+                        return Optional.of(repository.save(recetaDB));
                     }else {
                         return Optional.empty();
                     }
                 }
-
-                recetaDB.setConsulta(consultaDB);
-                recetaDB.setMedicamento(medicamentoDB);
-                recetaDB.setCantidad(recetaDTO.getCantidad());
-                return Optional.of(repository.save(recetaDB));
             }
             return Optional.empty();
         }
-        return  optionalReceta;
+        return Optional.empty();
     }
 
     @Override
     public Optional<Receta> delete(Long id) {
         Optional<Receta> optionalReceta = repository.findById(id);
-        optionalReceta.ifPresent(receta -> {
-            //consulta.setCita(null);
-            repository.delete(receta);
-        });
+        boolean RecetaEnFactura = repository.ExisteRecetaFactura(id);
+        if(optionalReceta.isPresent()){
+            if(!RecetaEnFactura) {
+                Receta receta = optionalReceta.orElseThrow();
+                Medicamento medicamento = receta.getMedicamento();
+                Integer stock = receta.getCantidad();
+                medicamento.setStock(medicamento.getStock() + stock);
+                medicamentoRepository.save(medicamento);
+
+                repository.delete(receta);
+                return optionalReceta;
+            }
+            return Optional.empty();
+        }
         return optionalReceta;
     }
 }

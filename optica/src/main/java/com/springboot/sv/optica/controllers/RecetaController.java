@@ -33,7 +33,7 @@ public class RecetaController {
         if(optionalReceta.isPresent()){
             return ResponseEntity.ok(optionalReceta.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Receta no encontrada!");
     }
 
     @PostMapping
@@ -46,7 +46,7 @@ public class RecetaController {
 
             return ResponseEntity.ok(optionalReceta.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la creacion de la Receta, Consulta no Permitida o Stock insuficiente!");
     }
 
     @PutMapping("/{id}")
@@ -58,7 +58,7 @@ public class RecetaController {
         if (optionalReceta.isPresent()){
             return ResponseEntity.status(HttpStatus.CREATED).body(optionalReceta.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la actualizacion de la Receta!");
     }
 
     @DeleteMapping("/{id}")
@@ -67,7 +67,7 @@ public class RecetaController {
         if (optionalReceta.isPresent()){
             return ResponseEntity.ok(optionalReceta.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la eliminacion de la Receta!");
     }
 
     private ResponseEntity<?> validation(BindingResult result){ //DEFINIR ESTE METODO SIEMPRE

@@ -1,6 +1,6 @@
 package com.springboot.sv.optica.controllers;
 
-import com.springboot.sv.optica.entities.Paciente;
+import com.springboot.sv.optica.entities.*;
 import com.springboot.sv.optica.services.PacienteService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,43 @@ public class PacienteController {
         if(optionalPaciente.isPresent()){
             return ResponseEntity.ok(optionalPaciente.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Paciente no encontrado!");
+    }
+
+    @GetMapping("/citas/{id}")
+    public ResponseEntity<?> viewCita(@PathVariable Long id){
+        List<Cita> optionalCita = service.citasPaciente(id);
+        if(!optionalCita.isEmpty()){
+            return ResponseEntity.ok(optionalCita);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Paciente no encontrado!");
+    }
+
+    @GetMapping("/consultas/{id}")
+    public ResponseEntity<?> viewConsulta(@PathVariable Long id){
+        List<Consulta> optionalConsulta = service.consultasPaciente(id);
+        if(!optionalConsulta.isEmpty()){
+            return ResponseEntity.ok(optionalConsulta);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Paciente no encontrado!");
+    }
+
+    @GetMapping("/facturasCitas/{id}")
+    public ResponseEntity<?> viewFacturaCita(@PathVariable Long id){
+        List<FacturaCita> optionalFacturaCita = service.facturasCitasPaciente(id);
+        if(!optionalFacturaCita.isEmpty()){
+            return ResponseEntity.ok(optionalFacturaCita);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Paciente no encontrado!");
+    }
+
+    @GetMapping("/facturasLentes/{id}")
+    public ResponseEntity<?> viewFacturaLente(@PathVariable Long id){
+        List<FacturaProducto> optionalFacturaProducto = service.facturasLentesPaciente(id);
+        if(!optionalFacturaProducto.isEmpty()){
+            return ResponseEntity.ok(optionalFacturaProducto);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Paciente no encontrado!");
     }
 
     @PostMapping()
@@ -52,7 +88,7 @@ public class PacienteController {
         if (optionalPaciente.isPresent()){
             return ResponseEntity.status(HttpStatus.CREATED).body(optionalPaciente.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la actualizacion del Paciente, Paciente no encontrado!");
     }
 
     @DeleteMapping("/{id}")
@@ -61,7 +97,7 @@ public class PacienteController {
         if (optionalPaciente.isPresent()){
             return ResponseEntity.ok(optionalPaciente.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la eliminacion del Paciente, Paciente no encontrado o Paciente asociado a otros registros!");
     }
 
     private ResponseEntity<?> validation(BindingResult result){ //DEFINIR ESTE METODO SIEMPRE

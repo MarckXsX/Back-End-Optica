@@ -1,6 +1,6 @@
 package com.springboot.sv.optica.services.implementaciones;
 
-import com.springboot.sv.optica.entities.Paciente;
+import com.springboot.sv.optica.entities.*;
 import com.springboot.sv.optica.repositories.PacienteRepository;
 import com.springboot.sv.optica.services.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +26,27 @@ public class PacienteServiceImpl implements PacienteService {
     @Transactional(readOnly = true)
     public Optional<Paciente> findById(Long id) {
         return repository.findById(id);
+    }
+
+    @Override
+    public List<Cita> citasPaciente(Long id) {
+        return repository.citasPaciente(id);
+    }
+
+    @Override
+    public List<Consulta> consultasPaciente(Long id) {
+        return repository.consultasPaciente(id);
+    }
+
+    @Override
+    public List<FacturaCita> facturasCitasPaciente(Long id) {
+        return repository.facturasCitasPaciente(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<FacturaProducto> facturasLentesPaciente(Long id) {
+        return repository.facturasLentesPaciente(id);
     }
 
     @Override
@@ -56,9 +77,15 @@ public class PacienteServiceImpl implements PacienteService {
     @Transactional()
     public Optional<Paciente> delete(Long id) {
         Optional<Paciente> optionalPaciente = repository.findById(id);
-        optionalPaciente.ifPresent(paciente -> {
-            repository.delete(paciente);
-        });
+        if(optionalPaciente.isPresent()){
+            Paciente pacienteDB = optionalPaciente.orElseThrow();
+            if(pacienteDB.getCitas().isEmpty() && pacienteDB.getFacturaProductoList().isEmpty()
+                    && pacienteDB.getFacturaCitaList().isEmpty()) {
+                repository.delete(pacienteDB);
+                return optionalPaciente;
+            }
+            return Optional.empty();
+        }
         return optionalPaciente;
     }
 }

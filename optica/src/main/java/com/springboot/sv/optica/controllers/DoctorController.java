@@ -1,5 +1,6 @@
 package com.springboot.sv.optica.controllers;
 
+import com.springboot.sv.optica.entities.Consulta;
 import com.springboot.sv.optica.entities.Doctor;
 import com.springboot.sv.optica.entities.Expediente;
 import com.springboot.sv.optica.entities.dto.DoctorDTO;
@@ -38,6 +39,15 @@ public class DoctorController {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/consultas/{id}")
+    public ResponseEntity<?> viewConsulta(@PathVariable Long id){
+        List<Consulta> optionalConsulta = service.consultasDoctor(id);
+        if(!optionalConsulta.isEmpty()){
+            return ResponseEntity.ok(optionalConsulta);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Doctor no encontrado!");
+    }
+
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody DoctorDTO doctorDTO, BindingResult result){
         if(result.hasFieldErrors()){
@@ -48,7 +58,7 @@ public class DoctorController {
 
             return ResponseEntity.ok(optionalDoctor.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la Creacion del Doctor!");
     }
 
     @PutMapping("/{id}")
@@ -60,7 +70,7 @@ public class DoctorController {
         if (optionalDoctor.isPresent()){
             return ResponseEntity.status(HttpStatus.CREATED).body(optionalDoctor.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la actualizacion del Doctor, Doctor no encontrado!");
     }
 
     @DeleteMapping("/{id}")
@@ -69,7 +79,7 @@ public class DoctorController {
         if (optionalDoctor.isPresent()){
             return ResponseEntity.ok(optionalDoctor.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la eliminacion del Doctor, Doctor no encontrado o Doctor asociado a otros registros!");
     }
 
     private ResponseEntity<?> validation(BindingResult result){ //DEFINIR ESTE METODO SIEMPRE

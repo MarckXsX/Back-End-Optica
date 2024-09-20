@@ -46,12 +46,18 @@ public class ConsultaServiceImpl implements ConsultaService {
         if(optionalCita.isPresent() && optionalDoctor.isPresent()){
             Cita citaDB = optionalCita.orElseThrow();
             Doctor doctorDB = optionalDoctor.orElseThrow();
-            Consulta consulta = new Consulta();
-            consulta.setCita(citaDB);
-            consulta.setDoctor(doctorDB);
-            consulta.setDiagnostico(consultaDTO.getDiagnostico());
-            consulta.setInstrucciones(consultaDTO.getInstrucciones());
-            return Optional.of(repository.save(consulta));
+            if(citaDB.getEstado().equalsIgnoreCase("Pendiente")){
+                citaDB.setEstado("Finalizada");
+                citaRepository.save(citaDB);
+
+                Consulta consulta = new Consulta();
+                consulta.setCita(citaDB);
+                consulta.setDoctor(doctorDB);
+                consulta.setDiagnostico(consultaDTO.getDiagnostico());
+                consulta.setInstrucciones(consultaDTO.getInstrucciones());
+                return Optional.of(repository.save(consulta));
+            }
+            return Optional.empty();
         }
         return Optional.empty();
     }
@@ -59,20 +65,46 @@ public class ConsultaServiceImpl implements ConsultaService {
     @Override
     public Optional<Consulta> update(Long id, ConsultaDTO consultaDTO) {
        Optional<Consulta> optionalConsulta = repository.findById(id);
-       if(optionalConsulta.isPresent()){
+
+       if(optionalConsulta.isPresent() ){
+           boolean ConsultaFactura = repository.ExisteConsultaFactura(id);
+
+           if(ConsultaFactura){
+               return Optional.empty();
+           }
+
            Optional<Cita> optionalCita = citaRepository.findById(consultaDTO.getCita());
            Optional<Doctor> optionalDoctor = doctorRepository.findById(consultaDTO.getDoctor());
-           if(optionalCita.isPresent() && optionalDoctor.isPresent()){
-               Cita citaDB = optionalCita.orElseThrow();
-               Doctor doctorDB = optionalDoctor.orElseThrow();
-               Consulta consultaDB = optionalConsulta.orElseThrow();
-               consultaDB.setCita(citaDB);
-               consultaDB.setDoctor(doctorDB);
-               consultaDB.setDiagnostico(consultaDTO.getDiagnostico());
-               consultaDB.setInstrucciones(consultaDTO.getInstrucciones());
-               return Optional.of(repository.save(consultaDB));
-           }
-           return Optional.empty();
+
+           boolean citaConsulta = repository.existsByCitaIdAndId(consultaDTO.getCita(), id);
+
+           boolean citaSinConsulta = repository.existsByCitaId(consultaDTO.getCita());
+
+           Cita citaDB = optionalCita.orElseThrow();
+           Doctor doctorDB = optionalDoctor.orElseThrow();
+           Consulta consultaDB = optionalConsulta.orElseThrow();
+
+               if(citaConsulta) { //Si cita es la misma para la consulta
+                   consultaDB.setCita(citaDB);
+                   consultaDB.setDoctor(doctorDB);
+                   consultaDB.setDiagnostico(consultaDTO.getDiagnostico());
+                   consultaDB.setInstrucciones(consultaDTO.getInstrucciones());
+                   return Optional.of(repository.save(consultaDB));
+               } else if (!citaSinConsulta /*|| citaDB.getConsulta() == null*/) { //si la cita cambia para la consulta y no esta registrada en otra consulta
+                  Cita citaAnt = consultaDB.getCita();
+                  citaAnt.setEstado("Pendiente");
+                  citaRepository.save(citaAnt);
+
+                  citaDB.setEstado("Finalizada");
+                  citaRepository.save(citaDB);
+
+                  consultaDB.setCita(citaDB);
+                  consultaDB.setDoctor(doctorDB);
+                  consultaDB.setDiagnostico(consultaDTO.getDiagnostico());
+                  consultaDB.setInstrucciones(consultaDTO.getInstrucciones());
+                  return Optional.of(repository.save(consultaDB));
+               }
+               return Optional.empty();
        }
        return  optionalConsulta;
     }

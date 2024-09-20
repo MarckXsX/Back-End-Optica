@@ -32,7 +32,7 @@ public class MedicamentoController {
         if(optionalMedicamento.isPresent()){
             return ResponseEntity.ok(optionalMedicamento.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Medicamento no encontrado!");
     }
 
     @PostMapping()
@@ -52,7 +52,7 @@ public class MedicamentoController {
         if (optionalMedicamento.isPresent()){
             return ResponseEntity.status(HttpStatus.CREATED).body(optionalMedicamento.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la actualizacion del Medicamento, Medicamento no encontrado!");
     }
 
     @DeleteMapping("/{id}")
@@ -61,7 +61,7 @@ public class MedicamentoController {
         if (optionalMedicamento.isPresent()){
             return ResponseEntity.ok(optionalMedicamento.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la eliminacion del Medicamento, Medicamento no encontrado o Medicamento asociado a otros registros!");
     }
 
     private ResponseEntity<?> validation(BindingResult result){ //DEFINIR ESTE METODO SIEMPRE

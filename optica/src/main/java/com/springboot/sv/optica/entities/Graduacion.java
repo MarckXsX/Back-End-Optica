@@ -13,7 +13,7 @@ public class Graduacion {
     private Long id;
 
     @JsonIgnoreProperties({"graduacion","handler","hibernateLazyInitializer"})
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_consulta")
     private Consulta consulta;
 

@@ -33,7 +33,7 @@ public class EspecialidadController {
         if(optionalEspecialidad.isPresent()){
             return ResponseEntity.ok(optionalEspecialidad.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Especialidad no encontrada!");
     }
 
     @PostMapping()
@@ -53,7 +53,7 @@ public class EspecialidadController {
         if (optionalEspecialidad.isPresent()){
             return ResponseEntity.status(HttpStatus.CREATED).body(optionalEspecialidad.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la actualizacion de la Especialidad, Especialidad no encontrada!");
     }
 
     @DeleteMapping("/{id}")
@@ -62,7 +62,7 @@ public class EspecialidadController {
         if (optionalEspecialidad.isPresent()){
             return ResponseEntity.ok(optionalEspecialidad.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la eliminacion de la Especialidad, Especialidad no encontrada o Especialidad asociada a otrs registros!");
     }
 
     private ResponseEntity<?> validation(BindingResult result){ //DEFINIR ESTE METODO SIEMPRE

@@ -37,7 +37,7 @@ public class ConsultasController {
         if(optionalConsulta.isPresent()){
             return ResponseEntity.ok(optionalConsulta.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Consulta no encontrada!");
     }
 
     @PostMapping
@@ -50,7 +50,7 @@ public class ConsultasController {
 
             return ResponseEntity.ok(optionalConsulta.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la creacion de la Consulta, Solo se pueden agregar Citas pendientes!");
     }
 
     @PutMapping("/{id}")
@@ -64,7 +64,7 @@ public class ConsultasController {
         if (optionalConsulta.isPresent()){
             return ResponseEntity.status(HttpStatus.CREATED).body(optionalConsulta.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la actualizacion de la Consulta, Cita no permitida, Consulta no encontrada, Consulta no permitida para actualizar!");
     }
 
     @DeleteMapping("/{id}")

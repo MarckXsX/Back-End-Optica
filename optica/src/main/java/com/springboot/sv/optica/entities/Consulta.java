@@ -15,7 +15,7 @@ public class Consulta {
     private Long id;
 
     @JsonIgnoreProperties({"consulta","handler","hibernateLazyInitializer"})
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_cita")
     private Cita cita;
 

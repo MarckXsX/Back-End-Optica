@@ -129,6 +129,14 @@ public class Paciente {
         this.facturaProductoList = facturaProductoList;
     }
 
+    public List<FacturaCita> getFacturaCitaList() {
+        return facturaCitaList;
+    }
+
+    public void setFacturaCitaList(List<FacturaCita> facturaCitaList) {
+        this.facturaCitaList = facturaCitaList;
+    }
+
     @Override
     public String toString() {
         return "{" +

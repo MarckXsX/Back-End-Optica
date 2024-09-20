@@ -52,17 +52,22 @@ public class FacturaProductoImpl implements FacturaProductoService {
             Aro aroDB = optionalAro.orElseThrow();
             Graduacion graduacionDB = optionalGraduacion.orElseThrow();
 
-            Double Monto = aroDB.getPrecio() + graduacionDB.getCosto_lente();
+            if(graduacionDB.getFacturaProducto() == null){
 
-            FacturaProducto facturaProducto = new FacturaProducto();
-            facturaProducto.setPaciente(pacienteDB);
-            facturaProducto.setAro(aroDB);
-            facturaProducto.setGraduacion(graduacionDB);
-            facturaProducto.setMonto_total(Monto);
-            facturaProducto.setFecha_emision(facturaDTO.getFecha_emision());
-            facturaProducto.setEstado(facturaDTO.getEstado());
+                Double Monto = aroDB.getPrecio() + graduacionDB.getCosto_lente();
 
-            return Optional.of(repository.save(facturaProducto));
+                FacturaProducto facturaProducto = new FacturaProducto();
+                facturaProducto.setPaciente(pacienteDB);
+                facturaProducto.setAro(aroDB);
+                facturaProducto.setGraduacion(graduacionDB);
+                facturaProducto.setMonto_total(Monto);
+                facturaProducto.setFecha_emision(facturaDTO.getFecha_emision());
+                facturaProducto.setEstado(facturaDTO.getEstado());
+
+                return Optional.of(repository.save(facturaProducto));
+            }
+            return Optional.empty();
+
         }
         return Optional.empty();
     }

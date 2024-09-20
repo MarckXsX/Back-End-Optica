@@ -53,11 +53,9 @@ public class CitaServiceImpl implements CitaService {
         Optional<Cita> optionalCita = repository.findById(id);
         if (optionalCita.isPresent()) {
             Cita citaDB = optionalCita.orElseThrow();
-            String estadoCita = citaDB.getEstado();
             Optional<Paciente> optionalPaciente = pacienteRepository.findById(citaDTO.getPaciente());
-            if(optionalPaciente.isPresent() && !estadoCita.equalsIgnoreCase("Finalizada") && !citaDTO.getEstado().equalsIgnoreCase("Finalizada") ){
+            if(optionalPaciente.isPresent() &&  citaDB.getFacturaCita() == null){
                 Paciente pacienteDB = optionalPaciente.orElseThrow();
-                //Cita citaDB = optionalCita.orElseThrow();
                 citaDB.setPaciente(pacienteDB);
                 citaDB.setFecha_cita(citaDTO.getFecha_cita());
                 citaDB.setHora_cita(citaDTO.getHora_cita());
@@ -74,20 +72,14 @@ public class CitaServiceImpl implements CitaService {
     @Override
     public Optional<Cita> delete(Long id) {
         Optional<Cita> optionalCita = repository.findById(id);
-        /*if(optionalCita.isPresent()){
+        if(optionalCita.isPresent()){
             Cita citaDB = optionalCita.orElseThrow();
-            if(!citaDB.getEstado().equalsIgnoreCase("Finalizada")){
-                optionalCita.ifPresent(cita -> {
-                    repository.delete(cita);
-                });
+            if(citaDB.getFacturaCita() == null && citaDB.getConsulta() == null) {
+                repository.delete(citaDB);
+                return optionalCita;
             }
-            return  Optional.empty();
-        }*/
-        optionalCita.ifPresent(cita -> {
-            if(!cita.getEstado().equalsIgnoreCase("Finalizada")) {
-                repository.delete(cita);
-            }
-        });
+            return Optional.empty();
+        }
         return optionalCita;
     }
 }

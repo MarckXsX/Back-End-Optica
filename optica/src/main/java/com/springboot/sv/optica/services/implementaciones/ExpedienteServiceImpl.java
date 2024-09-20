@@ -40,8 +40,9 @@ public class ExpedienteServiceImpl implements ExpedienteService {
     public Optional<Expediente> save(ExpedienteDTO expedienteDTO) {
         Optional<Paciente> optionalPaciente = pacienteRepository.findById(expedienteDTO.getPaciente());
         boolean pacienteExpediente = repository.existsByPacienteId(expedienteDTO.getPaciente());
-        if(optionalPaciente.isPresent() && !pacienteExpediente){
-            Paciente pacienteDB = optionalPaciente.orElseThrow();
+        Paciente pacienteDB = optionalPaciente.orElseThrow();
+        if(!pacienteExpediente /*|| pacienteDB.getExpediente() == null*/){
+            //Paciente pacienteDB = optionalPaciente.orElseThrow();
             Expediente expediente = new Expediente();
             expediente.setPaciente(pacienteDB);
             expediente.setObservaciones(expedienteDTO.getObservaciones());
@@ -59,10 +60,8 @@ public class ExpedienteServiceImpl implements ExpedienteService {
         if (optionalExpediente.isPresent()) {
             Optional<Paciente> optionalPaciente = pacienteRepository.findById(expedienteDTO.getPaciente());
             boolean PacienteConExpediente = repository.existsByPacienteIdAndId(expedienteDTO.getPaciente(),id);
-            //boolean pacienteSinExpediente = repository.existsByPacienteId(expedienteDTO.getPaciente());
-            //System.out.println("El paciente no posee registro de expediente = " + !pacienteSinExpediente);
-            //System.out.println("El paciente esta registrado con el expediente que se paso por id " + PacienteConExpediente);
-           if(optionalPaciente.isPresent() &&  PacienteConExpediente){
+            boolean pacienteSinExpediente = repository.existsByPacienteId(expedienteDTO.getPaciente());
+           if(PacienteConExpediente || !pacienteSinExpediente){
                Expediente expedienteDB = optionalExpediente.orElseThrow();
                Paciente pacienteDB = optionalPaciente.orElseThrow();
                expedienteDB.setPaciente(pacienteDB);

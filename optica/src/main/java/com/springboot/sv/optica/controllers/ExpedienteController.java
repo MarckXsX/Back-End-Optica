@@ -35,7 +35,7 @@ public class ExpedienteController {
         if(expedienteOptinal.isPresent()){
             return ResponseEntity.ok(expedienteOptinal.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Expediente no encontrado!");
     }
 
     @PostMapping
@@ -48,7 +48,7 @@ public class ExpedienteController {
 
             return ResponseEntity.ok(optionalExpediente.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la creacion del expediente, Paciente ya registrado con otro expediente!");
     }
 
     @PutMapping("/{id}")
@@ -60,7 +60,7 @@ public class ExpedienteController {
         if (optionalExpediente.isPresent()){
             return ResponseEntity.status(HttpStatus.CREATED).body(optionalExpediente.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la actualizacion del expediente, Paciente no permitido o Expediente no encontrado!");
     }
 
     @DeleteMapping("/{id}")

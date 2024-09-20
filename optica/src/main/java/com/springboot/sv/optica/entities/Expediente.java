@@ -16,7 +16,7 @@ public class Expediente {
 
     //@JsonManagedReference // Indica que esta parte se debe incluir en la serialización
     @JsonIgnoreProperties({"expediente","handler","hibernateLazyInitializer"})
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_paciente")
     private Paciente paciente;
 

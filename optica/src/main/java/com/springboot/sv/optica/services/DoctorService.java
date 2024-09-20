@@ -1,5 +1,6 @@
 package com.springboot.sv.optica.services;
 
+import com.springboot.sv.optica.entities.Consulta;
 import com.springboot.sv.optica.entities.Doctor;
 import com.springboot.sv.optica.entities.dto.DoctorDTO;
 
@@ -10,6 +11,8 @@ public interface DoctorService {
     List<Doctor> findAll();
 
     Optional<Doctor> findById(Long id);
+
+    List<Consulta> consultasDoctor(Long id);
 
     Optional<Doctor> save(DoctorDTO doctorDTO);
 

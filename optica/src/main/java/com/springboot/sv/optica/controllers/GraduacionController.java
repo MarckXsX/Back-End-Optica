@@ -35,7 +35,7 @@ public class GraduacionController {
         if(optionalGraduacion.isPresent()){
             return ResponseEntity.ok(optionalGraduacion.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Graduacion no encontrada!");
 
     }
 
@@ -49,7 +49,7 @@ public class GraduacionController {
 
             return ResponseEntity.ok(optionalGraduacion.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la creacion de la Graduacion, Consulta no permitida!");
     }
 
     @PutMapping("/{id}")
@@ -61,7 +61,7 @@ public class GraduacionController {
         if (optionalGraduacion.isPresent()){
             return ResponseEntity.status(HttpStatus.CREATED).body(optionalGraduacion.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la actualizacion de la Graduacion, Consulta no permitida, Graduacion no permitida!");
     }
 
     @DeleteMapping("/{id}")
@@ -70,7 +70,7 @@ public class GraduacionController {
         if (optionalGraduacion.isPresent()){
             return ResponseEntity.ok(optionalGraduacion.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la eliminacion de la Graduacion, Graduacion asociada a una factura!");
     }
 
     private ResponseEntity<?> validation(BindingResult result){ //DEFINIR ESTE METODO SIEMPRE

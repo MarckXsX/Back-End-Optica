@@ -1,10 +1,22 @@
 package com.springboot.sv.optica.entities.dto;
 
+import com.springboot.sv.optica.validation.IsExistsCita;
+import com.springboot.sv.optica.validation.IsExistsPaciente;
+import com.springboot.sv.optica.validation.IsFecha;
+import com.springboot.sv.optica.validation.IsRequired;
+
 public class FacturaCitaDTO {
 
+    @IsExistsPaciente
     private Long paciente;
+
+    @IsExistsCita
     private Long cita;
+
+    @IsFecha
     private String fehca;
+
+    @IsRequired
     private String estado;
 
     public Long getPaciente() {

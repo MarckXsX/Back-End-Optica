@@ -92,5 +92,11 @@ public class Doctor {
         this.licencia = licencia;
     }
 
+    public List<Consulta> getConsultas() {
+        return consultas;
+    }
 
+    public void setConsultas(List<Consulta> consultas) {
+        this.consultas = consultas;
+    }
 }

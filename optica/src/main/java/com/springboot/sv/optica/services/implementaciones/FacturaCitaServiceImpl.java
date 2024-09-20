@@ -48,35 +48,35 @@ public class FacturaCitaServiceImpl implements FacturaCitaService {
         Optional<Paciente> optionalPaciente = pacienteRepository.findById(facturaDTO.getPaciente());
         Optional<Cita> optionalCita = citaRepository.findById(facturaDTO.getCita());
         if(optionalPaciente.isPresent() && optionalCita.isPresent()){
-            List<Object[]> data = citaRepository.obtenerMedicamentosCita(facturaDTO.getCita());
-
-            List<Long> listIds = new ArrayList<>(); //almacena los datos de los id de los medicamentos de las citas
-
-            Double total = 0.0;
-            Double costoCita = 0.0;
-
-            for (Object[] dat: data ){
-                costoCita = (Double) dat[0]; // Se asigna el costo de la cita
-                total += (Double) dat[2] * (Integer) dat[3]; //Obtengo el valor total de los medicamentos
-                listIds.add((Long) dat[1]); //guardo los id
-            }
-            total += costoCita;
-            Iterable<Medicamento> medicamentos  = medicamentoRepository.findAllById(listIds);
             Paciente pacienteDB = optionalPaciente.orElseThrow();
             Cita citaDB = optionalCita.orElseThrow();
-            FacturaCita factura = new FacturaCita();
-            factura.setPaciente(pacienteDB);
-            factura.setCita(citaDB);
-            factura.setMonto_total(total);
-            factura.setFecha_emision(facturaDTO.getFehca());
-            factura.setEstado(facturaDTO.getEstado());
-            factura.setMedicamentos((List<Medicamento>) medicamentos);
+            if(citaDB.getEstado().equalsIgnoreCase("Finalizada") && citaDB.getFacturaCita() == null){
+                List<Object[]> data = citaRepository.obtenerMedicamentosCita(facturaDTO.getCita());
 
-            return Optional.of (repository.save(factura));
-            /*System.out.println("medicamentos = " + medicamentos);
-            System.out.println("listIds = " + listIds);
-            System.out.println("Total = " + total);
-            System.out.println("Costo de la Cita = " + costoCita);*/
+                List<Long> listIds = new ArrayList<>(); //almacena los datos de los id de los medicamentos de las citas
+
+                Double total = 0.0;
+                Double costoCita = citaDB.getCosto();
+
+                for (Object[] dat: data ){
+                    //costoCita = (Double) dat[0]; // Se asigna el costo de la cita
+                    total += (Double) dat[2] * (Integer) dat[3]; //Obtengo el valor total de los medicamentos
+                    listIds.add((Long) dat[1]); //guardo los id
+                }
+
+                total += costoCita;
+                Iterable<Medicamento> medicamentos  = medicamentoRepository.findAllById(listIds);
+                FacturaCita factura = new FacturaCita();
+                factura.setPaciente(pacienteDB);
+                factura.setCita(citaDB);
+                factura.setMonto_total(total);
+                factura.setFecha_emision(facturaDTO.getFehca());
+                factura.setEstado(facturaDTO.getEstado());
+                factura.setMedicamentos((List<Medicamento>) medicamentos);
+
+                return Optional.of (repository.save(factura));
+            }
+            return Optional.empty();
         }
         return Optional.empty();
     }

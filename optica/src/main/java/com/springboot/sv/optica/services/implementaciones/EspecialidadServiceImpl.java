@@ -47,9 +47,14 @@ public class EspecialidadServiceImpl implements EspecialidadService {
     @Override
     public Optional<Especialidad> delete(Long id) {
         Optional<Especialidad> optionalEspecialidad = repository.findById(id);
-        optionalEspecialidad.ifPresent(especialidad -> {
-            repository.delete(especialidad);
-        });
+        if(optionalEspecialidad.isPresent()){
+            Especialidad especialidadDB = optionalEspecialidad.orElseThrow();
+            if(especialidadDB.getDoctors().isEmpty()){
+                repository.delete(especialidadDB);
+                return  optionalEspecialidad;
+            }
+            return Optional.empty();
+        }
         return optionalEspecialidad;
     }
 }

@@ -49,9 +49,14 @@ public class AroServiceImpl implements AroService {
     @Override
     public Optional<Aro> delete(Long id) {
         Optional<Aro> optionalAro = repository.findById(id);
-        optionalAro.ifPresent(aro -> {
-            repository.delete(aro);
-        });
+        if(optionalAro.isPresent()){
+            Aro aroDB = optionalAro.orElseThrow();
+            if(aroDB.getFacturaProductoList().isEmpty()){
+                repository.delete(aroDB);
+                return optionalAro;
+            }
+            return Optional.empty();
+        }
         return optionalAro;
     }
 }
